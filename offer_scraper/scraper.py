@@ -2,11 +2,13 @@ from typing import Tuple, List
 
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
 
 # TODO:
 #   * Check browser vs script item order
 #   * reset counter when skip_sponsored
+#   * Multiprocessing for requests each link
 
 class Scraper:
     HEADER = {
@@ -30,13 +32,27 @@ class Scraper:
         self.remove_tracking_info = remove_tracking_info
         self.skip_sponsored = skip_sponsored
         self.i = 0
-        self.links = None
+        # Info to export
+        self.info = {key: None for key in ['link', 'price', 'vendor']}
 
     def search(self) -> None:
         # 1. Grab all offers/publications links
         self.scrap_links()
         # 2. Request each link and grab information
-        pass
+        self.extract_info()
+
+    def extract_info(self) -> None:
+        # TODO: Multiprocessing (Faster)
+        prices = []
+        vendors = []
+        for link in self.info['link']:
+            soup = self.request_and_parse(link)
+            price = soup.find('span', {'class': 'price-tag-fraction'})
+            vendor = soup.find('a', {'class': 'ui-pdp-media__action ui-box-component__action'})
+            prices.append(price)
+            vendors.append(vendor)
+        self.info['price'] = prices
+        self.info['vendor'] = vendor
 
     def scrap_links(self) -> None:
         """
@@ -56,7 +72,7 @@ class Scraper:
             new_links, keep_searching = self.iterate_children(items_container)
             links.extend(new_links)
             next_page_link = self.next_page_available(soup)
-        self.links = links
+        self.info['link'] = links
 
     def request_and_parse(self, url: str):
         # 1. Send request
@@ -97,4 +113,5 @@ class Scraper:
 
 if __name__ == '__main__':
     scraper = Scraper('boxer', 90, skip_sponsored=False)
+    scraper.search()
     scraper.export()
