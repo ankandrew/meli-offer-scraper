@@ -1,3 +1,11 @@
+## MeLi Scraper
+
+### Table of contents
+
+- [Requirements](#requirements)
+- [Usage](#usage)
+- [Result](#result)
+
 ### Requirements
 
 * Python 3.5+
@@ -35,3 +43,7 @@ To skip ads/sponsored offers:
 ```shell
 python run.py boxer 10 --skip_sponsor
 ```
+
+### Result
+
+![resultado](img/resultado_demo.png)
