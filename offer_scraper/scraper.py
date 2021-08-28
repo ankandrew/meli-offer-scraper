@@ -95,7 +95,7 @@ class Scraper:
         if request.status_code == 404:
             raise ValueError('No se encontro el item!')
         # 3. Parse html
-        return BeautifulSoup(request.text, 'html.parser')
+        return BeautifulSoup(request.text, 'lxml')
 
     def next_page_available(self, soup):
         """
