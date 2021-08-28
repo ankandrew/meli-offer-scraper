@@ -1,9 +1,9 @@
+import urllib.parse
 from typing import Tuple, List
 
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
-import urllib.parse
 
 
 # TODO:
@@ -114,6 +114,6 @@ class Scraper:
 
 
 if __name__ == '__main__':
-    scraper = Scraper('boxer', 4, skip_sponsored=False)
+    scraper = Scraper('boxer', 10, skip_sponsored=False, remove_tracking_info=True)
     scraper.search()
     scraper.export()
