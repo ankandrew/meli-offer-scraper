@@ -38,7 +38,7 @@ class Scraper:
 
     def search(self) -> None:
         # 1. Grab all offers/publications links
-        self.scrap_links()
+        self._scrap_links()
         # 2. Request each link and grab information
         self.extract_info()
 
@@ -56,7 +56,7 @@ class Scraper:
         self.info['price'] = prices
         self.info['vendor'] = vendors
 
-    def scrap_links(self) -> None:
+    def _scrap_links(self) -> None:
         """
         Scrap offer links with a maximum of self.max_queries offers
         """
