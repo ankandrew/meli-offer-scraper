@@ -4,6 +4,7 @@ from typing import Tuple, List
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+from timeit import default_timer as timer
 
 
 # TODO:
@@ -36,11 +37,22 @@ class Scraper:
         # Info to export
         self.info = {key: None for key in ['link', 'price', 'vendor']}
 
-    def search(self) -> None:
+    def search(self, verbose: bool = True) -> None:
         # 1. Grab all offers/publications links
+        start = timer()
         self._scrap_links()
+        links_end = timer()
         # 2. Request each link and grab information
+        extract_start = timer()
         self.extract_info()
+        end = timer()
+        total_time = end - start
+        if verbose:
+            print(f'*------------TIEMPO----------------*')
+            print(f'Buscar links {links_end - start} ({(links_end - start) * 100 / total_time:.0f} %)')
+            print(f'Entrar en c/publicacion {end - extract_start} ({(end - extract_start) * 100 / total_time:.0f} %)')
+            print(f'Total {total_time}s')
+            print(f'*----------------------------------*')
 
     def extract_info(self) -> None:
         # TODO: Multiprocessing (Faster)
@@ -110,7 +122,7 @@ class Scraper:
         return link[0:link.index(self.TRACKING_DEL) + len(self.TRACKING_DEL)] if self.remove_tracking_info else link
 
     def export(self):
-        pd.DataFrame.from_dict(self.info).to_csv('../resultados.csv', index=False)
+        pd.DataFrame.from_dict(self.info).to_csv('resultados.csv', index=False)
 
 
 if __name__ == '__main__':
