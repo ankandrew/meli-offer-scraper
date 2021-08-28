@@ -3,7 +3,7 @@ from typing import Tuple, List
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-from urllib import parse
+import urllib.parse
 
 
 # TODO:
@@ -50,11 +50,11 @@ class Scraper:
             soup = self.request_and_parse(link)
             price = soup.find('span', {'class': 'price-tag-fraction'}).text
             vendor = soup.find('a', {'class': 'ui-pdp-media__action ui-box-component__action'}).get('href')
-            vendor = parse(vendor.split('/')[-1].replace('+', ' '))
+            vendor = urllib.parse.unquote(vendor.split('/')[-1].replace('+', ' '))
             prices.append(price)
             vendors.append(vendor)
         self.info['price'] = prices
-        self.info['vendor'] = vendor
+        self.info['vendor'] = vendors
 
     def scrap_links(self) -> None:
         """
@@ -110,7 +110,7 @@ class Scraper:
         return link[0:link.index(self.TRACKING_DEL) + len(self.TRACKING_DEL)] if self.remove_tracking_info else link
 
     def export(self):
-        pass
+        pd.DataFrame.from_dict(self.info).to_csv('../resultados.csv', index=False)
 
 
 if __name__ == '__main__':
